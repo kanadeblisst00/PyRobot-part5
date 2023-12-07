@@ -37,7 +37,7 @@ def init_python_in_process(hProcess, dll_addr, dllpath, py_code_path=None, open_
     '''在进程内初始化Python'''
     # 定义 injectpy.dll内的导出函数
     dll = CDLL(dllpath)
-    SetDllPath =  dll_addr + get_func_offset(dll, "SetDllPath")
+    SetDllPath =  dll_addr + get_func_offset(dll, "SetPythonPath")
     SetOpenConsole =  dll_addr + get_func_offset(dll, "SetOpenConsole")
     RunPythonConsole =  dll_addr + get_func_offset(dll, "RunPythonConsole")
     RunPythonFile = dll_addr + get_func_offset(dll, "RunPythonFile")
@@ -58,7 +58,7 @@ def init_python_in_process(hProcess, dll_addr, dllpath, py_code_path=None, open_
         lpPyCodePath = VirtualAllocEx(hProcess, None, MAX_PATH, MEM_COMMIT, PAGE_READWRITE)
         WriteProcessMemory(hProcess, lpPyCodePath, c_wchar_p(py_code_path), MAX_PATH, byref(c_ulong()))
         hRemote = DelayCreateRemoteThread(hProcess, None, 0, RunPythonFile, lpPyCodePath, 0, None)
-        time.sleep(0.5)
+        time.sleep(1.5)
         VirtualFreeEx(hProcess, lpPyCodePath, 0, MEM_RELEASE)
         CloseHandle(hRemote)
 
